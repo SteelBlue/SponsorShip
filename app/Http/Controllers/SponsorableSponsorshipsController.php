@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class SponsorableSponsorshipsController extends Controller
 {
-    public function new()
+    public function new($slug)
     {
         $sponsorable = Sponsorable::findOrFailBySlug($slug);
         $sponsorableSlots = $sponsorable->slots;

@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SponsorableTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function finding_a_sponsorable_by_slug()
     {

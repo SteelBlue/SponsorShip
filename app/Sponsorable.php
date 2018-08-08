@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sponsorable extends Model
 {
-    //
+    public static function findOrFailBySlug($slug)
+    {
+    }
 }

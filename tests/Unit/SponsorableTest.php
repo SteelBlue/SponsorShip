@@ -3,18 +3,19 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Sponsorable;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SponsorableTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testExample()
+    /** @test */
+    public function finding_a_sponsorable_by_slug()
     {
-        $this->assertTrue(true);
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $foundSponsorable = Sponsorable::findOrFailBySlug('full-stack-radio');
+
+        $this->assertTrue($foundSponsorable->is($sponsorable));
     }
 }

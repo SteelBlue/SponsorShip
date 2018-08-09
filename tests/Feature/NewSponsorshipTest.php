@@ -2,6 +2,7 @@
 
 namespace Feature;
 
+use App\Purchase;
 use Tests\TestCase;
 use App\Sponsorable;
 use App\SponsorableSlot;

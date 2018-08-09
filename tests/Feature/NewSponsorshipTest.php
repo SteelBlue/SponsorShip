@@ -15,7 +15,7 @@ class NewSponsorshipTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function viewing_the_new_sponsorship_page()
+    public function viewing_the_new_sponsorship_page()
     {
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
@@ -33,7 +33,7 @@ class NewSponsorshipTest extends TestCase
     }
 
     /** @test */
-    function sponsorable_slots_are_listed_in_chronological_order()
+    public function sponsorable_slots_are_listed_in_chronological_order()
     {
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
@@ -51,5 +51,26 @@ class NewSponsorshipTest extends TestCase
         $this->assertTrue($response->data('sponsorableSlots')[0]->is($slotC));
         $this->assertTrue($response->data('sponsorableSlots')[1]->is($slotA));
         $this->assertTrue($response->data('sponsorableSlots')[2]->is($slotB));
+    }
+
+    /** @test */
+    public function only_upcoming_sponsorable_slots_are_listed()
+    {
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $sponsorableSlots = new EloquentCollection([
+            $slotA = factory(SponsorableSlot::class)->create(['publish_date' => Carbon::now()->subDays(10), 'sponsorable_id' => $sponsorable, ]),
+            $slotB = factory(SponsorableSlot::class)->create(['publish_date' => Carbon::now()->subDays(1), 'sponsorable_id' => $sponsorable, ]),
+            $slotC = factory(SponsorableSlot::class)->create(['publish_date' => Carbon::now()->addDays(1), 'sponsorable_id' => $sponsorable, ]),
+            $slotD = factory(SponsorableSlot::class)->create(['publish_date' => Carbon::now()->addDays(10), 'sponsorable_id' => $sponsorable, ]),
+        ]);
+
+        $response = $this->get('/full-stack-radio/sponsorships/new');
+
+        $response->assertSuccessful();
+        $this->assertTrue($response->data('sponsorable')->is($sponsorable));
+        $this->assertCount(2, $response->data('sponsorableSlots'));
+        $this->assertTrue($response->data('sponsorableSlots')[0]->is($slotC));
+        $this->assertTrue($response->data('sponsorableSlots')[1]->is($slotD));
     }
 }

@@ -11,7 +11,7 @@ class SponsorableSponsorshipsController extends Controller
     {
         $sponsorable = Sponsorable::findOrFailBySlug($slug);
 
-        $sponsorableSlots = $sponsorable->slots()->orderBy('publish_date')->get();
+        $sponsorableSlots = $sponsorable->slots()->where('publish_date', '>', now())->orderBy('publish_date')->get();
 
         return view('sponsorable-sponsorships.new', [
             'sponsorable' => $sponsorable,

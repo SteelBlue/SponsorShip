@@ -19,9 +19,9 @@ class PurchaseSponsorshipTest extends TestCase
     {
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
-        $slotA = factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
-        $slotB = factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2)]);
-        $slotC = factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3)]);
+        $slotA = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
+        $slotB = factory(SponsorableSlot::class)->create(['price' => 30000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2)]);
+        $slotC = factory(SponsorableSlot::class)->create(['price' => 25000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3)]);
 
         $response = $this->postJson('/full-stack-radio/sponsorships', [
             'sponsorable_slots' => [

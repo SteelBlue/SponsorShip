@@ -25,7 +25,8 @@ class PurchaseSponsorshipTest extends TestCase
 
         $response = $this->postJson('/full-stack-radio/sponsorships');
 
-        $response->assertSuccessful();
+        // Assert return of Status 201: CREATED.
+        $response->assertStatus(201);
 
         $this->assertEquals(1, Sponsorship::count());
         $sponsorship = Sponsorship::first();

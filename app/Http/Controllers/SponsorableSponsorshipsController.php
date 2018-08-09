@@ -13,6 +13,7 @@ class SponsorableSponsorshipsController extends Controller
         $sponsorableSlots = $sponsorable->slots;
 
         return view('sponsorable-sponsorships.new', [
+            'sponsorable' => $sponsorable,
             'sponsorableSlots' => $sponsorableSlots,
         ]);
     }

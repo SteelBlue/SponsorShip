@@ -20,18 +20,19 @@ class NewSponsorshipTest extends TestCase
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
         $sponsorableSlots = new EloquentCollection([
-            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable]),
-            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable]),
-            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable]),
+            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => Carbon::now()]),
+            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => Carbon::now()]),
+            factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => Carbon::now()]),
         ]);
 
         $response = $this->get('/full-stack-radio/sponsorships/new');
 
         $response->assertSuccessful();
-        // $response->assertTrue($response->data('sponsorable')->is($sponsorable));
+        $this->assertTrue($response->data('sponsorable')->is($sponsorable));
         $sponsorableSlots->assertEquals($response->data('sponsorableSlots'));
     }
 
+    /** @test */
     function sponsorable_slots_are_listed_in_chronological_order()
     {
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
@@ -45,7 +46,7 @@ class NewSponsorshipTest extends TestCase
         $response = $this->get('/full-stack-radio/sponsorships/new');
 
         $response->assertSuccessful();
-        // $response->assertTrue($response->data('sponsorable')->is($sponsorable));
+        $this->assertTrue($response->data('sponsorable')->is($sponsorable));
         $this->assertCount(3, $response->data('sponsorableSlots'));
         $this->assertTrue($response->data('sponsorableSlots')[0]->is($slotC));
         $this->assertTrue($response->data('sponsorableSlots')[1]->is($slotA));

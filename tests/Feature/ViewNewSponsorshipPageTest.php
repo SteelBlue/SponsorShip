@@ -3,8 +3,8 @@
 namespace Feature;
 
 use Tests\TestCase;
-use App\Sponsorship;
 use App\Sponsorable;
+use App\Sponsorship;
 use App\SponsorableSlot;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -24,10 +24,9 @@ class NewSponsorshipTest extends TestCase
             factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable]),
         ]);
 
-        $response = $this->withoutExceptionHandling()->get('/full-stack-radio/sponsorships/new');
+        $response = $this->get('/full-stack-radio/sponsorships/new');
 
         $response->assertSuccessful();
-        // $this->assertCount(3, $response->data('sponsorableSlots'));
         $sponsorableSlots->assertEquals($response->data('sponsorableSlots'));
     }
 }

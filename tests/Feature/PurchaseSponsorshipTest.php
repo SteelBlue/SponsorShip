@@ -17,6 +17,9 @@ class PurchaseSponsorshipTest extends TestCase
     /** @test */
     public function purchasing_available_sponsorship_slots()
     {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
         $slotA = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
@@ -40,5 +43,12 @@ class PurchaseSponsorshipTest extends TestCase
         $this->assertEquals($sponsorship->getKey(), $slotC->fresh()->sponsorship_id);
 
         $this->assertNull($slotB->fresh()->sponsorship_id);
+
+        // Assert there was (1) charge.
+        $paymentGateway->assertChargeCount(1);
+
+        // Assert the charge-amount equals $750.
+        $charge = $paymentGateway->charges()->first();
+        $this->assertEquals(75000, $charge->amount());
     }
 }

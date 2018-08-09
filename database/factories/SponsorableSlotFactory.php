@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\SponorableSlot::class, function (Faker $faker) {
+$factory->define(App\SponsorableSlot::class, function (Faker $faker) {
     return [
         //
     ];

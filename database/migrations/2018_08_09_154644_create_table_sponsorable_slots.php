@@ -16,6 +16,7 @@ class CreateTableSponsorableSlots extends Migration
         Schema::create('sponsorable_slots', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('sponsorable_id')->unsigned();
+            $table->integer('purchase_id')->unsigned()->nullable();
             $table->dateTime('publish_date');
             $table->timestamps();
         });

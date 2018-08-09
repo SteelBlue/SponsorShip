@@ -2,7 +2,8 @@
 
 https://www.youtube.com/channel/UCy1H38XrN7hi7wHSClfXPqQ
 
-One Paragraph of project description goes here
+This is my journey watching Adam Wathan's live stream of "Building SponsorShip". Most of my
+notes can be found within the commit messages.
 
 ## Built With
 

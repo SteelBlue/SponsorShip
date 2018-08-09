@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Sponsorable;
 use App\Sponsorship;
 use App\SponsorableSlot;
+use Tests\FakePaymentGateway;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

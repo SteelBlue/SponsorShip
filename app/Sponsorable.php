@@ -10,4 +10,9 @@ class Sponsorable extends Model
     {
         return self::where('slug', $slug)->firstOrFail();
     }
+
+    public function slots()
+    {
+        return $this->hasMany(SponsorableSlot::class);
+    }
 }

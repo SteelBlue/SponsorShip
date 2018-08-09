@@ -27,7 +27,7 @@ class NewSponsorshipTest extends TestCase
         $response = $this->withoutExceptionHandling()->get('/full-stack-radio/sponsorships/new');
 
         $response->assertSuccessful();
-        $this->assertCount(3, $response->data('sponsorableSlots'));
+        // $this->assertCount(3, $response->data('sponsorableSlots'));
         $sponsorableSlots->assertEquals($response->data('sponsorableSlots'));
     }
 }

@@ -8,6 +8,6 @@ class Sponsorable extends Model
 {
     public static function findOrFailBySlug($slug)
     {
-        return self::where('slug', $slug)->first();
+        return self::where('slug', $slug)->firstOrFail();
     }
 }

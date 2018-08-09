@@ -34,6 +34,6 @@ class PurchaseSponsorshipTest extends TestCase
         $this->assertEquals($sponsorship->getKey(), $slotA->fresh()->sponsorship_id);
         $this->assertEquals($sponsorship->getKey(), $slotC->fresh()->sponsorship_id);
 
-        $this->assertNull($slotB->fresh()->purchase_id);
+        $this->assertNull($slotB->fresh()->sponsorship_id);
     }
 }

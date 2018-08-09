@@ -23,7 +23,12 @@ class PurchaseSponsorshipTest extends TestCase
         $slotB = factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2)]);
         $slotC = factory(SponsorableSlot::class)->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3)]);
 
-        $response = $this->postJson('/full-stack-radio/sponsorships');
+        $response = $this->postJson('/full-stack-radio/sponsorships', [
+            'sponsorable_slots' => [
+                $slotA->getKey(),
+                $slotC->getKey(),
+            ],
+        ]);
 
         // Assert return of Status 201: CREATED.
         $response->assertStatus(201);

@@ -2,8 +2,8 @@
 
 namespace Feature;
 
-use App\Purchase;
 use Tests\TestCase;
+use App\Sponsorship;
 use App\Sponsorable;
 use App\SponsorableSlot;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -81,14 +81,14 @@ class ViewNewSponsorshipPageTest extends TestCase
     public function only_purchasable_sponsorable_slots_are_listed()
     {
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
-        $purchase = factory(Purchase::class)->create();
+        $sponsorship = factory(Sponsorship::class)->create();
 
         $slotA = factory(SponsorableSlot::class)
                     ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
         $slotB = factory(SponsorableSlot::class)
-                    ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2), 'purchase_id' => $purchase]);
+                    ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2), 'sponsorship_id' => $sponsorship]);
         $slotC = factory(SponsorableSlot::class)
-                    ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3), 'purchase_id' => $purchase]);
+                    ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3), 'sponsorship_id' => $sponsorship]);
         $slotD = factory(SponsorableSlot::class)
                     ->create(['sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(4)]);
 

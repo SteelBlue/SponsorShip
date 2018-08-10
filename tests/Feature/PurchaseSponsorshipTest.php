@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Sponsorable;
 use App\Sponsorship;
+use App\PaymentGateway;
 use App\SponsorableSlot;
 use Tests\FakePaymentGateway;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -21,13 +22,15 @@ class PurchaseSponsorshipTest extends TestCase
         // Binding to IoC/Service Container for PaymentGateway
         $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
 
-        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio', 'name' => 'Full Stack Radio']);
 
         $slotA = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
         $slotB = factory(SponsorableSlot::class)->create(['price' => 30000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(2)]);
         $slotC = factory(SponsorableSlot::class)->create(['price' => 25000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(3)]);
 
         $response = $this->postJson('/full-stack-radio/sponsorships', [
+            'email' => 'john@example.com',
+            'company_name' => 'DigitalTechnoSoft, Inc.',
             'sponsorable_slots' => [
                 $slotA->getKey(),
                 $slotC->getKey(),
@@ -40,16 +43,22 @@ class PurchaseSponsorshipTest extends TestCase
         $this->assertEquals(1, Sponsorship::count());
         $sponsorship = Sponsorship::first();
 
+        $this->assertEquals('john@example.com', $sponsorship->email);
+        $this->assertEquals('DigitalTechnoSoft, Inc.', $sponsorship->company_name);
+        $this->assertEquals(75000, $sponsorship->amount);
+
         $this->assertEquals($sponsorship->getKey(), $slotA->fresh()->sponsorship_id);
         $this->assertEquals($sponsorship->getKey(), $slotC->fresh()->sponsorship_id);
 
         $this->assertNull($slotB->fresh()->sponsorship_id);
 
         // Assert there was (1) charge.
-        $paymentGateway->assertChargeCount(1);
+        $this->assertCount(1, $paymentGateway->charges());
 
         // Assert the charge-amount equals $750.
         $charge = $paymentGateway->charges()->first();
+        $this->assertEquals('john@example.com', $charge->email());
         $this->assertEquals(75000, $charge->amount());
+        $this->assertEquals('Full Stack Radio sponsorship', $charge->description());
     }
 }

@@ -5,7 +5,9 @@ namespace Feature;
 use Tests\TestCase;
 use App\Sponsorable;
 use App\Sponsorship;
+use App\PaymentGateway;
 use App\SponsorableSlot;
+use Tests\FakePaymentGateway;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -17,6 +19,9 @@ class ViewNewSponsorshipPageTest extends TestCase
     /** @test */
     public function viewing_the_new_sponsorship_page()
     {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
         $sponsorableSlots = new EloquentCollection([
@@ -35,6 +40,9 @@ class ViewNewSponsorshipPageTest extends TestCase
     /** @test */
     public function sponsorable_slots_are_listed_in_chronological_order()
     {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
         $slotA = factory(SponsorableSlot::class)
@@ -57,6 +65,9 @@ class ViewNewSponsorshipPageTest extends TestCase
     /** @test */
     public function only_upcoming_sponsorable_slots_are_listed()
     {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
 
         $slotA = factory(SponsorableSlot::class)
@@ -80,6 +91,9 @@ class ViewNewSponsorshipPageTest extends TestCase
     /** @test */
     public function only_purchasable_sponsorable_slots_are_listed()
     {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
         $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
         $sponsorship = factory(Sponsorship::class)->create();
 

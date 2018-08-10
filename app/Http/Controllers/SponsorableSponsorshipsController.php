@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class SponsorableSponsorshipsController extends Controller
 {
+    private $paymentGateway;
+
+    function __construct($paymentGateway)
+    {
+        $this->paymentGateway = $paymentGateway;
+    }
+
     public function new($slug)
     {
         $sponsorable = Sponsorable::findOrFailBySlug($slug);
@@ -21,11 +28,19 @@ class SponsorableSponsorshipsController extends Controller
         ]);
     }
 
-    public function store()
+    public function store($slug)
     {
-        $sponsorship = Sponsorship::create();
+        $sponsorable = Sponsorable::findOrFailBySlug($slug);
 
         $slots = SponsorableSlot::whereIn('id', request('sponsorable_slots'))->get();
+
+        $sponsorship = Sponsorship::create([
+            'email' => request('email'),
+            'company_name' => request('company_name'),
+            'amount' => $slots->sum('price'),
+        ]);
+
+        $this->paymentGateway->charge(request('email'), $slots->sum('price'), 'tok', "{$sponsorable->name} sponsorship");
 
         $slots->each->update(['sponsorship_id' => $sponsorship->id]);
 

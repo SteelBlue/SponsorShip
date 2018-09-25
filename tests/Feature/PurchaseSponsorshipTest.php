@@ -64,7 +64,7 @@ class PurchaseSponsorshipTest extends TestCase
     }
 
     /** @test */
-    public function a_valid_payment_token_is_required()
+    public function sponsorship_is_not_created_if_payment_token_cannot_be_charged()
     {
         // Binding to IoC/Service Container for PaymentGateway
         $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
@@ -84,6 +84,138 @@ class PurchaseSponsorshipTest extends TestCase
 
         // Assert return of Status 422: UNPROCESSABLE ENTITY.
         $response->assertStatus(422);
+
+        $this->assertEquals(0, Sponsorship::count());
+
+        $this->assertNull($slot->fresh()->sponsorship_id);
+
+        // Assert there was no charges made.
+        $this->assertCount(0, $paymentGateway->charges());
+    }
+
+    /** @test */
+    public function company_name_is_required()
+    {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $slot = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
+
+        $response = $this->withExceptionHandling()->postJson('/full-stack-radio/sponsorships', [
+            'email' => 'john@example.com',
+            'company_name' => '',
+            'payment_token' => $paymentGateway->validTestToken(),
+            'sponsorable_slots' => [
+                $slot->getKey(),
+            ],
+        ]);
+
+        // Assert return of Status 422: UNPROCESSABLE ENTITY.
+        $response->assertStatus(422);
+
+        // Assert Json validation errors for the company_name.
+        $response->assertJsonValidationErrors('company_name');
+
+        $this->assertEquals(0, Sponsorship::count());
+
+        $this->assertNull($slot->fresh()->sponsorship_id);
+
+        // Assert there was no charges made.
+        $this->assertCount(0, $paymentGateway->charges());
+    }
+
+    /** @test */
+    public function email_is_required()
+    {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $slot = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
+
+        $response = $this->withExceptionHandling()->postJson('/full-stack-radio/sponsorships', [
+            'email' => '',
+            'company_name' => 'DigitalTechnoSoft, Inc.',
+            'payment_token' => $paymentGateway->validTestToken(),
+            'sponsorable_slots' => [
+                $slot->getKey(),
+            ],
+        ]);
+
+        // Assert return of Status 422: UNPROCESSABLE ENTITY.
+        $response->assertStatus(422);
+
+        // Assert Json validation errors for the email.
+        $response->assertJsonValidationErrors('email');
+
+        $this->assertEquals(0, Sponsorship::count());
+
+        $this->assertNull($slot->fresh()->sponsorship_id);
+
+        // Assert there was no charges made.
+        $this->assertCount(0, $paymentGateway->charges());
+    }
+
+    /** @test */
+    public function email_must_look_like_an_email()
+    {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $slot = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
+
+        $response = $this->withExceptionHandling()->postJson('/full-stack-radio/sponsorships', [
+            'email' => 'not-a-valid-email',
+            'company_name' => 'DigitalTechnoSoft, Inc.',
+            'payment_token' => $paymentGateway->validTestToken(),
+            'sponsorable_slots' => [
+                $slot->getKey(),
+            ],
+        ]);
+
+        // Assert return of Status 422: UNPROCESSABLE ENTITY.
+        $response->assertStatus(422);
+
+        // Assert Json validation errors for the email.
+        $response->assertJsonValidationErrors('email');
+
+        $this->assertEquals(0, Sponsorship::count());
+
+        $this->assertNull($slot->fresh()->sponsorship_id);
+
+        // Assert there was no charges made.
+        $this->assertCount(0, $paymentGateway->charges());
+    }
+
+    /** @test */
+    public function payment_token_is_required()
+    {
+        // Binding to IoC/Service Container for PaymentGateway
+        $paymentGateway = $this->app->instance(PaymentGateway::class, new FakePaymentGateway);
+
+        $sponsorable = factory(Sponsorable::class)->create(['slug' => 'full-stack-radio']);
+
+        $slot = factory(SponsorableSlot::class)->create(['price' => 50000,'sponsorable_id' => $sponsorable, 'publish_date' => now()->addMonths(1)]);
+
+        $response = $this->withExceptionHandling()->postJson('/full-stack-radio/sponsorships', [
+            'email' => 'john@example.com',
+            'company_name' => 'DigitalTechnoSoft, Inc.',
+            'payment_token' => null,
+            'sponsorable_slots' => [
+                $slot->getKey(),
+            ],
+        ]);
+
+        // Assert return of Status 422: UNPROCESSABLE ENTITY.
+        $response->assertStatus(422);
+
+        // Assert Json validation errors for the payment_token.
+        $response->assertJsonValidationErrors('payment_token');
 
         $this->assertEquals(0, Sponsorship::count());
 

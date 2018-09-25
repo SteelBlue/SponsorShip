@@ -33,6 +33,12 @@ class SponsorableSponsorshipsController extends Controller
     {
         try {
 
+            request()->validate([
+                'email' => ['required', 'email'],
+                'company_name' => ['required'],
+                'payment_token' => ['required'],
+            ]);
+
             $sponsorable = Sponsorable::findOrFailBySlug($slug);
 
             $slots = SponsorableSlot::whereIn('id', request('sponsorable_slots'))->get();
@@ -50,7 +56,9 @@ class SponsorableSponsorshipsController extends Controller
             return response()->json([], 201);
 
         } catch (PaymentFailedException $e) {
+
             return response()->json([], 422);
+
         }
     }
 }

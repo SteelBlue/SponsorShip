@@ -49,6 +49,7 @@ class FakePaymentGatewayTest extends TestCase
             // Attempt a charge via the paymentGateway.
             $paymentGateway->charge('john@example.com', 25000, 'invalid-payment-token', 'Example description');
 
+            // Fail with message about payment-token being invalid.
             $this->fail("The charge succeeded even though the payment token was invalid.");
 
         } catch (PaymentFailedException $e) {
